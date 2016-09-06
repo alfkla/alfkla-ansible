@@ -1,0 +1,10 @@
+---
+- name: install epel 
+  hosts: barman
+  remote_user: alf
+  become: yes
+
+  tasks:
+    - name: install packages epel
+      yum: name=epel-release state=latest
+

@@ -1,0 +1,24 @@
+---
+- name: install epel vim gcc python postgresklient barman
+  hosts: barman
+  remote_user: alf
+  become: yes
+
+  pre_tasks:
+    - name: yum get update
+      yum: name='*' state=latest
+
+    - name: install packages epel
+      yum: name=epel-release state=latest
+    - name: install packages vim
+      yum: name=vim state=latest
+    - name: install packages gcc
+      yum: name=gcc state=latest
+    - name: install packages pyton-devel
+      yum: name=python-devel state=latest
+    - name: install packages postgres client
+      yum: name=postgresql95 state=latest
+    - name: install packages barman
+      yum: name=barman state=latest
+      ignore_errors: yes
+

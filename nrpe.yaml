@@ -1,0 +1,25 @@
+---
+- name: install nrpe nagios-plugins-load nagios-plugins-users nagios-plugins-procs nagios-plugins-disk nagios-plugins-openmanage nagios-plugins-pgsql
+  hosts: barman
+  remote_user: alf
+  become: yes
+
+  pre_tasks:
+    - name: yum get update
+      yum: name='*' state=latest
+
+    - name: install packages nrpe
+      yum: name=nrpe state=latest
+    - name: install packages nagios-plugins-load
+      yum: name=nagios-plugins-load state=latest
+    - name: install packages nagios-plugins-users
+      yum: name=nagios-plugins-users state=latest
+    - name: install packages nagios-plugins-procs
+      yum: name=nagios-plugins-procs state=latest
+    - name: install packages nagios-plugins-disk
+      yum: name=nagios-plugins-disk state=latest
+    - name: install packages nagios-plugins-openmanage
+      yum: name=nagios-plugins-openmanage state=latest
+    - name: install packages nagios-plugins-pgsql
+      yum: name=nagios-plugins-pgsql state=latest
+      ignore_errors: yes

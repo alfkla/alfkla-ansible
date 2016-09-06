@@ -1,0 +1,18 @@
+---
+- name: install nfs
+  hosts: barman
+  remote_user: alf
+  become: yes
+
+  tasks:
+    - name: nfs-utils pakke
+      yum: name=nfs-utils state=latest
+    - name: mailx pakke 
+      yum: name=mailx state=latest
+    - name: bash-completion pakke 
+      yum: name=bash-completion state=latest
+    - name: rsync pakke 
+      yum: name=rsync state=latest
+    - name: chrony pakke 
+      yum: name=chrony state=latest
+      ignore_errors: yes

@@ -1,0 +1,10 @@
+---
+- name: update yum repository
+  hosts: barman
+  remote_user: alf
+  become: yes
+
+  tasks:
+    - name: yum get update
+      yum: name='*' state=latest
+

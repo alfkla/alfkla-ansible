@@ -1,0 +1,29 @@
+---
+- name: installerer pakker for konfig av AD-auth
+  hosts: waklp
+  remote_user: alf
+  become: yes
+
+  pre_tasks:
+    - name: yum get update
+      yum: name='*' state=latest
+
+    - name: install packages realmd
+      yum: name=realmd state=latest
+    - name: install packages oddjob
+      yum: name=oddjob state=latest
+    - name: install packages oddjob-mkhomedir
+      yum: name=oddjob-mkhomedir state=latest
+    - name: install packages sssd
+      yum: name=sssd state=latest
+    - name: install packages samba-common
+      yum: name=samba-common state=latest
+    - name: install packages adcli
+      yum: name=adcli state=latest
+    - name: install packages pam_krb5
+      yum: name=pam_krb5 state=latest
+    - name: install packages krb5-workstation
+      yum: name=krb5-workstation state=latest
+    - name: install packages samba-winbind-modules
+      yum: name=samba-winbind-modules state=latest
+      ignore_errors: yes
