@@ -1,0 +1,69 @@
+#!/bin/bash
+# Kopier over alle filene fra S:\Webatlas Drift\Kundedrift\Servere\datavarehus\Oppsett 4.127 til mappen /root/setup
+# Kjør så denne filen
+#
+
+# Fjern interaktive dialoger
+unalias cp
+
+yum -y groupinstall "Base"
+- name: "Installing base group"
+  yum: name=Base state=present
+yum -y localinstall https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+- name: "Installing epel rpm package"
+  yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm state=present
+yum -y update
+wget -q -O - http://linux.dell.com/repo/hardware/dsu/bootstrap.cgi | bash; yum -y install dell-system-update srvadmin-all
+dsu -n
+
+# Endringer for bash
+cp -f /root/setup/bashrc /etc/
+
+# Syntaxhighlight for nano
+tar xvf /root/setup/nanoconf.tar -C /
+
+# Sette denne for å sørge for at ikke yum repos med like pakker blander og skaper konflikt: exclude=postgres*
+cp -f /root/setup/CentOS-Base.repo /etc/yum.repos.d/
+
+# Hent eget yum-repo for postgres og installer
+yum -y localinstall https://download.postgresql.org/pub/repos/yum/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-2.noarch.rpm
+yum -y install postgresql95-server postgresql95-contrib postgis2_95 pg_top95
+
+# For å unngå rare feil: SELINUX=disabled
+cp -f /root/setup/selinux /etc/sysconfig/
+
+# Init PG-struktur på disk og bytt så ut config med vår egen
+/usr/pgsql-9.5/bin/postgresql95-setup initdb
+cp -f /root/setup/postgresql.conf /var/lib/pgsql/9.5/data/
+cp -f /root/setup/pg_hba.conf /var/lib/pgsql/9.5/data/
+systemctl enable postgresql-9.5
+
+# Persistent logger selv ved boot
+mkdir /var/log/journal
+systemd-tmpfiles --create --prefix /var/log/journal
+
+# Setter disk-scheduler og en del andre tunables
+tuned-adm profile throughput-performance
+
+# NTP for klokkesync
+#yum -y install ntp
+#systemctl enable ntpd
+
+# Nagios
+yum -y install nrpe nagios-plugins-load nagios-plugins-users nagios-plugins-procs nagios-plugins-disk nagios-plugins-openmanage nagios-plugins-pgsql
+cp -f /root/setup/nrpe.cfg /etc/nagios/
+systemctl enable nrpe
+
+# Firewalld
+yum -y install firewalld
+systemctl enable firewalld
+systemctl start firewalld
+firewall-cmd --zone=public --permanent --add-port=5666/tcp
+firewall-cmd --zone=public --permanent --add-port=5432/tcp
+
+# Regionale innstillinger
+timedatectl set-timezone Europe/Oslo
+localectl set-keymap no
+
+# Reboot for at en del endringer skal tre i kraft
+reboot

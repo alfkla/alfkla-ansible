@@ -1,0 +1,17 @@
+---
+- hosts: webservers
+  remote_user: alf
+  become: yes
+  
+  tasks:
+   
+  - name: Add multiple repositories into the same file (2/2)
+    yum_repository:
+      name: CentOS-$releasever - Base
+      description: Base CentOs YUM repo
+      file: CentOS-Base
+      baseurl: http://mirror.centos.org/centos/$releasever/os/$basearch/
+      mirrorlist: http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra
+      enabled: no
+      gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+      gpgcheck: yes

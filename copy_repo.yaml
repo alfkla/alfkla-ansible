@@ -1,0 +1,12 @@
+---
+- hosts: webservers
+  remote_user: alf
+  become: yes
+  
+  tasks:
+   
+  - name: Configure CentOS mirror
+    template: src=yaml/files/CentOS-Base.repo dest=/etc/yum.repos.d/
+  - name: Copy GPG file 
+    copy: src=yaml/files/RPM-GPG-KEY-CentOS-7 dest=/etc/pki/rpm-gpg/
+#  - copy: src=/bin/bashrc dest=/bin/bashrc owner=root
